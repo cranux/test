@@ -3,16 +3,17 @@
 namespace App\Models;
 
 
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
-class Member extends Authenticatable implements Transformable,JWTSubject
+class Member extends Model implements Transformable,JWTSubject,AuthenticatableContract
 {
     use TransformableTrait;
-    use Notifiable;
+    use Authenticatable;
     protected $table = 'member';
     protected $primaryKey = 'id';
     protected $guarded = [];

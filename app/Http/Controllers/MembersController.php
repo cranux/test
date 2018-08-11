@@ -44,6 +44,8 @@ class MembersController extends Controller
     }
 
     /**
+     * http://test.cc/api/member?token=
+     *
      * http://test.cc/member?search=name:ja&searchFields=name:like
      * http://test.cc/member?filter=id;name
      * Display a listing of the resource.

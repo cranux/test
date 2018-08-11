@@ -15,11 +15,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('member','MembersController')->except([
-    'create','edit'
-]);
+
+
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/login', 'HomeController@login')->name('login');

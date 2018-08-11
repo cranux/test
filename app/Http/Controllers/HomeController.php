@@ -35,7 +35,7 @@ class HomeController extends Controller
         $member = $this->memberRepository->skipPresenter()->find(1);
 //        dd($member);
         $token = auth()->guard('api')->login($member);
-        dd($token);
+//        dd($token);
         return response_json('1001','成功',[
             'token' => $token
         ]);

@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -46,6 +47,49 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        //捕获laravel-permission异常 然后跳转到主页
+//        if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
+//            return redirect('/');
+//        }
+
+        if ($exception instanceof \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException) {
+
+            //判断token是否存在
+            if (! Auth::guard('api')->parser()->setRequest($request)->hasToken()) {
+                return response()->json([
+                    'code' => 4002,
+                    'message' => 'Token not provided',
+                ]);
+            }
+
+            //判断token是否正常
+            try {
+                if (! Auth::guard('api')->parseToken()->authenticate()) {
+                    return response()->json([
+                        'code' => 4003,
+                        'message' => 'jwt-auth: Member not found',
+                    ]);
+                }
+            } catch (Exception $e) {
+                return response()->json([
+                    'code' => 4004,
+                    'message' => 'jwt-auth: Token is error',
+                ]);
+            }
+        }
+
+        //判断token是否被列入黑名单（退出登录）
+        if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
+            if (! \auth()->guard('api')->user()) {
+
+                return response()->json([
+                    'code' => 4001,
+                    'message' => 'The token has been blacklisted',
+                ]);
+            }
+        }
+
+
         return parent::render($request, $exception);
     }
 }
